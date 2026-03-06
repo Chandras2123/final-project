@@ -3,6 +3,6 @@ uvicorn
 numpy
 opencv-python
 nibabel
-tensorflow
+tensorflow-cpu
 scikit-image
 scipy
