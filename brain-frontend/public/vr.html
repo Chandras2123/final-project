@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Brain VR Viewer</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+overflow:hidden;
+}
+
+#info{
+position:absolute;
+top:10px;
+left:10px;
+color:white;
+font-family:Arial;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="info">
+Brain VR Viewer
+</div>
+
+<script type="module">
+
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+import { OBJLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/OBJLoader.js";
+
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+
+
+const scene = new THREE.Scene()
+
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
+
+const renderer = new THREE.WebGLRenderer({antialias:true})
+
+renderer.setSize(window.innerWidth,window.innerHeight)
+
+document.body.appendChild(renderer.domElement)
+
+
+const light = new THREE.DirectionalLight(0xffffff,1)
+
+light.position.set(10,10,10)
+
+scene.add(light)
+
+scene.add(new THREE.AmbientLight(0xffffff,0.6))
+
+
+const controls = new OrbitControls(camera,renderer.domElement)
+
+
+const loader = new OBJLoader()
+
+
+loader.load(
+"http://127.0.0.1:8000/outputs/brain_mesh.obj",
+(obj)=>{
+
+obj.traverse(child=>{
+if(child.isMesh){
+child.material = new THREE.MeshStandardMaterial({
+color:0xffffff,
+transparent:true,
+opacity:0.3
+})
+}
+})
+
+scene.add(obj)
+
+}
+)
+
+
+loader.load(
+"http://127.0.0.1:8000/outputs/tumor_mesh.obj",
+(obj)=>{
+
+obj.traverse(child=>{
+if(child.isMesh){
+child.material = new THREE.MeshStandardMaterial({
+color:0xff0000
+})
+}
+})
+
+scene.add(obj)
+
+}
+)
+
+
+camera.position.z = 200
+
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+renderer.render(scene,camera)
+
+}
+
+animate()
+
+</script>
+
+</body>
+</html>

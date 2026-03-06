@@ -1,0 +1,166 @@
+import { useState } from "react"
+import axios from "axios"
+import Viewer from "./Viewer"
+import "./App.css"
+
+function App(){
+
+const [file,setFile]=useState(null)
+const [result,setResult]=useState(null)
+const [error,setError]=useState(null)
+const [loading,setLoading]=useState(false)
+
+const upload = async () => {
+
+if(!file){
+alert("Please select an MRI file")
+return
+}
+
+const form = new FormData()
+form.append("file",file)
+
+setLoading(true)
+
+try{
+
+const res = await axios.post(
+"http://127.0.0.1:8000/upload",
+form
+)
+
+setResult(res.data)
+setError(null)
+
+}catch(e){
+
+setResult(null)
+
+if(e.response){
+setError(e.response.data.detail)
+}else{
+setError("Upload failed")
+}
+
+}finally{
+
+setLoading(false)
+
+}
+
+}
+
+return(
+
+<div className="app">
+
+<header className="header">
+<h1>AI Brain Tumor Detection & 3D Surgical Planning</h1>
+<p>Deep Learning based MRI Analysis Platform</p>
+</header>
+
+
+<div className="uploadSection">
+
+<input
+type="file"
+id="fileUpload"
+hidden
+onChange={(e)=>setFile(e.target.files[0])}
+/>
+
+<label htmlFor="fileUpload" className="uploadBtn">
+Select MRI File
+</label>
+
+<button
+className="analyzeBtn"
+onClick={upload}
+disabled={loading}
+>
+
+{loading ? (
+<>
+<span className="spinner"></span>
+Analyzing...
+</>
+) : (
+"Analyze MRI"
+)}
+
+</button>
+
+</div>
+
+
+{error && (
+<div className="errorBox">
+{error}
+</div>
+)}
+
+
+{result && (
+
+<div className="resultPanel">
+
+<h2>Prediction Result</h2>
+
+<p><b>Mode:</b> {result.mode}</p>
+
+<p><b>Tumor Type:</b> {result.tumor_type}</p>
+
+
+{result.brain_mesh && (
+
+<>
+
+<div className="downloadSection">
+
+<a
+href={"http://127.0.0.1:8000/"+result.brain_mesh}
+target="_blank"
+>
+Download Brain Mesh
+</a>
+
+<a
+href={"http://127.0.0.1:8000/"+result.tumor_mesh}
+target="_blank"
+>
+Download Tumor Mesh
+</a>
+
+</div>
+
+
+<h3>3D Brain Visualization</h3>
+
+<Viewer
+brain={result.brain_mesh}
+tumor={result.tumor_mesh}
+/>
+
+
+<button
+className="vrBtn"
+onClick={()=>window.open("/vr.html","_blank")}
+>
+View Brain in VR
+</button>
+
+</>
+
+)}
+
+</div>
+
+)}
+
+</div>
+
+)
+
+}
+
+export default App
