@@ -7,3 +7,4 @@ tensorflow-cpu
 scikit-image
 scipy
 trimesh
+python-multipart
