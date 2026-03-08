@@ -19,6 +19,21 @@ from pipeline.mesh import brain_mask, save_mesh
 # ==========================================
 # APP INIT
 # ==========================================
+import cv2
+import numpy as np
+
+def is_brain_mri(img):
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    edges = cv2.Canny(gray,50,150)
+
+    edge_ratio = np.sum(edges > 0) / edges.size
+
+    if edge_ratio < 0.02:
+        return False
+
+    return True
 
 app = FastAPI()
 
@@ -107,6 +122,13 @@ def is_valid_nifti(path):
 # ==========================================
 
 @app.post("/upload")
+img = cv2.imread(filepath)
+
+if img is not None:
+    if not is_brain_mri(img):
+        return {
+            "error": "Uploaded image is not a brain MRI"
+        }
 async def upload_file(file: UploadFile = File(...)):
 
     try:
