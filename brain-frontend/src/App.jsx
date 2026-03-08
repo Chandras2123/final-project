@@ -66,6 +66,7 @@ return(
 <input
 type="file"
 id="fileUpload"
+accept=".nii,.nii.gz,.jpg,.png"
 hidden
 onChange={(e)=>setFile(e.target.files[0])}
 />
