@@ -1,6 +1,7 @@
 import nibabel as nib
 import numpy as np
-
+if image is None:
+    raise ValueError("Invalid MRI file")
 def load_and_preprocess(nii_path):
     nii = nib.load(nii_path)
     vol = nii.get_fdata()  # (H, W, D, C)
