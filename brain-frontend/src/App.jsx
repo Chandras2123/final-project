@@ -3,6 +3,8 @@ import axios from "axios"
 import Viewer from "./Viewer"
 import "./App.css"
 
+const API = "https://final-project-awar.onrender.com"
+
 function App(){
 
 const [file,setFile]=useState(null)
@@ -25,7 +27,7 @@ setLoading(true)
 try{
 
 const res = await axios.post(
-"http://127.0.0.1:8000/upload",
+API + "/upload",
 form
 )
 
@@ -59,7 +61,6 @@ return(
 <p>Deep Learning based MRI Analysis Platform</p>
 </header>
 
-
 <div className="uploadSection">
 
 <input
@@ -77,11 +78,11 @@ Select MRI File
 className="analyzeBtn"
 onClick={upload}
 disabled={loading}
+
 >
 
 {loading ? (
-<>
-<span className="spinner"></span>
+<> <span className="spinner"></span>
 Analyzing...
 </>
 ) : (
@@ -92,13 +93,12 @@ Analyzing...
 
 </div>
 
-
 {error && (
+
 <div className="errorBox">
 {error}
 </div>
 )}
-
 
 {result && (
 
@@ -110,7 +110,6 @@ Analyzing...
 
 <p><b>Tumor Type:</b> {result.tumor_type}</p>
 
-
 {result.brain_mesh && (
 
 <>
@@ -118,21 +117,22 @@ Analyzing...
 <div className="downloadSection">
 
 <a
-href={"http://127.0.0.1:8000/"+result.brain_mesh}
+href={API + "/" + result.brain_mesh}
 target="_blank"
+
 >
-Download Brain Mesh
-</a>
+
+Download Brain Mesh </a>
 
 <a
-href={"http://127.0.0.1:8000/"+result.tumor_mesh}
+href={API + "/" + result.tumor_mesh}
 target="_blank"
+
 >
-Download Tumor Mesh
-</a>
+
+Download Tumor Mesh </a>
 
 </div>
-
 
 <h3>3D Brain Visualization</h3>
 
@@ -141,13 +141,13 @@ brain={result.brain_mesh}
 tumor={result.tumor_mesh}
 />
 
-
 <button
 className="vrBtn"
 onClick={()=>window.open("/vr.html","_blank")}
+
 >
-View Brain in VR
-</button>
+
+View Brain in VR </button>
 
 </>
 
