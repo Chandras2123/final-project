@@ -39,7 +39,7 @@ setError(null)
 setResult(null)
 
 if(e.response){
-setError(e.response.data.detail)
+setError(e.response.data.error || e.response.data.detail)
 }else{
 setError("Upload failed")
 }
