@@ -9,6 +9,9 @@ import cv2
 import numpy as np
 import traceback
 
+import nibabel as nib
+import numpy as np
+from fastapi import Query
 from classifier import classify_slices, classify_image
 from pipeline.preprocess import load_and_preprocess
 from pipeline.inference import load_model, predict_volume
@@ -19,6 +22,7 @@ from pipeline.mesh import brain_mask, save_mesh
 # ==========================================
 # APP INIT
 # ==========================================
+
 import cv2
 import numpy as np
 
@@ -243,3 +247,17 @@ async def upload_file(file: UploadFile = File(...)):
             status_code=500,
             detail="Internal server error"
         )
+        @app.get("/slices")
+def get_mri_slices(path: str = Query(...)):
+
+    img = nib.load(path)
+    data = img.get_fdata()
+
+    slices = []
+
+    for i in range(data.shape[2]):
+        slice_img = data[:,:,i]
+        slice_img = (slice_img - slice_img.min())/(slice_img.max()-slice_img.min())
+        slices.append(slice_img.tolist())
+
+    return {"slices": slices}
