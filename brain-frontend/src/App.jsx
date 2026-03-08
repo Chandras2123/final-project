@@ -2,6 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import Viewer from "./Viewer"
 import "./App.css"
+import SliceViewer from "./SliceViewer"
 
 const API = "https://final-project-awar.onrender.com"
 
@@ -11,7 +12,7 @@ const [file,setFile]=useState(null)
 const [result,setResult]=useState(null)
 const [error,setError]=useState(null)
 const [loading,setLoading]=useState(false)
-
+const [showSlices,setShowSlices] = useState(false)
 const upload = async () => {
 
 if(!file){
@@ -147,9 +148,18 @@ className="vrBtn"
 onClick={()=>window.open("/vr.html","_blank")}
 
 >
-
+<button
+className="sliceBtn"
+onClick={()=>setShowSlices(true)}
+>
+View MRI Slices
+</button>
 View Brain in VR </button>
+{showSlices && (
 
+<SliceViewer filePath={result.file_path}/>
+
+)}
 </>
 
 )}
