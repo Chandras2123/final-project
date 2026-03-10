@@ -60,19 +60,16 @@ try:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     h, w = gray.shape
-
     if h < 80 or w < 80:
         return False
 
     b, g, r = cv2.split(img)
-
     color_diff = np.mean(abs(b-g)) + np.mean(abs(g-r))
 
     if color_diff > 60:
         return False
 
     std = np.std(gray)
-
     if std < 10:
         return False
 
@@ -117,7 +114,6 @@ async def upload_file(file: UploadFile = File(...)):
 try:
 
     filename = file.filename.lower()
-
     input_path = os.path.join("uploads", filename)
 
     with open(input_path, "wb") as buffer:
@@ -125,11 +121,7 @@ try:
 
     print("📂 Received file:", filename)
 
-
-    # ======================================
     # IMAGE MODE
-    # ======================================
-
     if filename.endswith((".jpg", ".jpeg", ".png")):
 
         img = cv2.imread(input_path)
@@ -153,11 +145,7 @@ try:
             "tumor_type": tumor_type
         }
 
-
-    # ======================================
     # NIFTI MODE
-    # ======================================
-
     elif filename.endswith((".nii", ".nii.gz")):
 
         if not is_valid_nifti(input_path):
@@ -177,9 +165,7 @@ try:
         tumor_nii = nib.Nifti1Image(tumor_mask.astype("uint8"), affine)
 
         mask_path = "outputs/tumor_mask.nii.gz"
-
         nib.save(tumor_nii, mask_path)
-
 
         brain = brain_mask(volume)
 
@@ -189,27 +175,21 @@ try:
         save_mesh(brain, brain_mesh_path)
         save_mesh(tumor_mask, tumor_mesh_path)
 
-
         return {
             "mode": "3d_analysis",
             "tumor_type": tumor_type,
             "mask": mask_path,
             "brain_mesh": brain_mesh_path,
-            "tumor_mesh": tumor_mesh_path
+            "tumor_mesh": tumor_mesh_path,
+            "file_path": input_path
         }
-
-
-    # ======================================
-    # UNSUPPORTED
-    # ======================================
 
     else:
 
         raise HTTPException(
             status_code=400,
-            detail="Unsupported file type. Upload MRI (.nii/.nii.gz) or image (.jpg/.png)"
+            detail="Unsupported file type."
         )
-
 
 except HTTPException as e:
     raise e
@@ -241,6 +221,7 @@ data = img.get_fdata()
 slices = []
 
 for i in range(data.shape[2]):
+
     slice_img = data[:, :, i]
 
     slice_img = (slice_img - slice_img.min()) / (slice_img.max() - slice_img.min() + 1e-8)
