@@ -54,7 +54,7 @@ print("✅ Segmentation model loaded")
 # ==========================================
 
 def is_brain_mri_image(img):
-try:
+ try:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     h, w = gray.shape
