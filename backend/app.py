@@ -209,7 +209,7 @@ def get_mri_slices(path: str = Query(...)):
 
  slices = []
 
-  for i in range(data.shape[2]):
+ for i in range(data.shape[2]):
 
     slice_img = data[:, :, i]
 
