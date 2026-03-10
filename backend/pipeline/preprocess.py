@@ -1,17 +1,17 @@
 import nibabel as nib
 import numpy as np
-if image is None:
-    raise ValueError("Invalid MRI file")
-def load_and_preprocess(nii_path):
-    nii = nib.load(nii_path)
-    vol = nii.get_fdata()  # (H, W, D, C)
 
-    # ✔ Select FLAIR channel
-    if vol.ndim == 4:
-        vol = vol[..., 3]
+def load_and_preprocess(path):
 
-    # Normalize (z-score)
-    mean, std = vol.mean(), vol.std()
-    vol = (vol - mean) / (std + 1e-8)
+    img = nib.load(path)
 
-    return vol.astype(np.float32), nii.affine
+    volume = img.get_fdata()
+
+    affine = img.affine
+
+    volume = volume.astype(np.float32)
+
+    # normalize MRI
+    volume = (volume - np.min(volume)) / (np.max(volume) - np.min(volume) + 1e-8)
+
+    return volume, affine
