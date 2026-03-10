@@ -73,7 +73,7 @@ def is_brain_mri_image(img):
 
     return True
 
-except:
+ except:
     return False
 
 # ==========================================
@@ -83,7 +83,7 @@ except:
 # ==========================================
 
 def is_valid_nifti(path):
-try:
+ try:
     nii = nib.load(path)
     data = nii.get_fdata()
 
@@ -92,7 +92,7 @@ try:
 
     return True
 
-except:
+ except:
     return False
 
 # ==========================================
@@ -103,7 +103,7 @@ except:
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-try:
+ try:
 
     filename = file.filename.lower()
     input_path = os.path.join("uploads", filename)
@@ -183,10 +183,10 @@ try:
             detail="Unsupported file type."
         )
 
-except HTTPException as e:
+ except HTTPException as e:
     raise e
 
-except Exception:
+ except Exception:
 
     print("❌ ERROR")
     traceback.print_exc()
@@ -204,12 +204,12 @@ except Exception:
 
 @app.get("/slices")
 def get_mri_slices(path: str = Query(...)):
-img = nib.load(path)
-data = img.get_fdata()
+ img = nib.load(path)
+ data = img.get_fdata()
 
-slices = []
+ slices = []
 
-for i in range(data.shape[2]):
+  for i in range(data.shape[2]):
 
     slice_img = data[:, :, i]
 
@@ -217,4 +217,4 @@ for i in range(data.shape[2]):
 
     slices.append(slice_img.tolist())
 
-return {"slices": slices}
+ return {"slices": slices}
