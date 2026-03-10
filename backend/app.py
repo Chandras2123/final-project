@@ -54,8 +54,6 @@ print("✅ Segmentation model loaded")
 # ==========================================
 
 def is_brain_mri_image(img):
-
-```
 try:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -77,7 +75,6 @@ try:
 
 except:
     return False
-```
 
 # ==========================================
 
@@ -86,8 +83,6 @@ except:
 # ==========================================
 
 def is_valid_nifti(path):
-
-```
 try:
     nii = nib.load(path)
     data = nii.get_fdata()
@@ -99,7 +94,6 @@ try:
 
 except:
     return False
-```
 
 # ==========================================
 
@@ -109,8 +103,6 @@ except:
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-
-```
 try:
 
     filename = file.filename.lower()
@@ -203,7 +195,6 @@ except Exception:
         status_code=500,
         detail="Internal server error"
     )
-```
 
 # ==========================================
 
@@ -213,8 +204,6 @@ except Exception:
 
 @app.get("/slices")
 def get_mri_slices(path: str = Query(...)):
-
-```
 img = nib.load(path)
 data = img.get_fdata()
 
@@ -229,4 +218,3 @@ for i in range(data.shape[2]):
     slices.append(slice_img.tolist())
 
 return {"slices": slices}
-```
